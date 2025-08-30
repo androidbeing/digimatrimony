@@ -19,8 +19,9 @@
 <div class="register-body">
     <div class="card" style="max-width:480px; margin:0 auto;">
         <h2>Register</h2>
-        <form method="post">
+        <form method="post" id="registerForm">
             {% csrf_token %}
+            <div id="registerAlert" style="display:none; background:#ffe6e6; color:#900; padding:8px; border-radius:6px; margin-bottom:8px"></div>
             <input name="first_name" placeholder="First name" required>
             <input name="last_name" placeholder="Last name">
             <input name="mobile" placeholder="Mobile number" required>
@@ -31,9 +32,75 @@
                 <option value="O">Other</option>
             </select>
             <p class="small">Password will be generated automatically as the reverse of your mobile number.</p>
-            <button type="submit">Register</button>
+            <button type="submit" id="registerBtn">Register</button>
+            <div id="registerProgress" style="display:none; margin-top:8px; align-items:center">
+                <svg width="24" height="24" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="25" cy="25" r="20" stroke="#128c7e" stroke-width="5" fill="none" stroke-linecap="round" stroke-dasharray="31.4 31.4">
+                        <animateTransform attributeName="transform" type="rotate" repeatCount="indefinite" dur="0.8s" from="0 25 25" to="360 25 25"/>
+                    </circle>
+                </svg>
+                <span style="margin-left:8px; color:#128c7e; vertical-align:middle">Registering...</span>
+            </div>
         </form>
         <p class="small">Already have an account? <a href="{% url 'login' %}">Login</a></p>
     </div>
 </div>
 {% endblock %}
+
+    {% block scripts %}
+    <script>
+    document.addEventListener('DOMContentLoaded', function(){
+        var form = document.getElementById('registerForm');
+        var btn = document.getElementById('registerBtn');
+        var progress = document.getElementById('registerProgress');
+        var alertBox = document.getElementById('registerAlert');
+
+        form.addEventListener('submit', function(e){
+            // client-side validation
+            var first = form.querySelector('input[name=first_name]').value.trim();
+            var last = form.querySelector('input[name=last_name]').value.trim();
+            var mobile = form.querySelector('input[name=mobile]').value.trim();
+            var nameRe = /^[A-Z][a-zA-Z]*$/;
+            var mobileRe = /^\d{10}$/;
+            if (!nameRe.test(first)){
+                e.preventDefault();
+                alertBox.textContent = 'First name must start with a capital letter and contain letters only.';
+                alertBox.style.display = 'block';
+                return false;
+            }
+            if (last && !nameRe.test(last)){
+                e.preventDefault();
+                alertBox.textContent = 'Last name must start with a capital letter and contain letters only.';
+                alertBox.style.display = 'block';
+                return false;
+            }
+            // normalize: remove non-digits and trim to last 10 digits if prefixed
+            var digits = mobile.replace(/\D/g, '');
+            if (digits.length > 10) digits = digits.slice(-10);
+            if (!mobileRe.test(digits)){
+                e.preventDefault();
+                alertBox.textContent = 'Mobile number must be exactly 10 digits (optionally prefixed with +91 or 0).';
+                alertBox.style.display = 'block';
+                return false;
+            }
+            if (!/^[6789]/.test(digits)){
+                e.preventDefault();
+                alertBox.textContent = 'Invalid Indian mobile number. It should start with 6,7,8, or 9.';
+                alertBox.style.display = 'block';
+                return false;
+            }
+            // replace the mobile input's value with the normalized digits so server receives canonical form
+            form.querySelector('input[name=mobile]').value = digits;
+            // pass client-side checks: show spinner and disable
+            btn.disabled = true;
+            progress.style.display = 'flex';
+            alertBox.style.display = 'none';
+        });
+
+        {% if error %}
+            alertBox.textContent = "{{ error|escapejs }}";
+            alertBox.style.display = 'block';
+        {% endif %}
+    });
+    </script>
+    {% endblock %}

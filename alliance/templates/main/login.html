@@ -15,13 +15,51 @@
 <div class="login-body">
     <div class="card login-card">
         <h2>Login</h2>
-        <form method="post">
+        <form method="post" id="loginForm">
             {% csrf_token %}
+            <div id="loginAlert" style="display:none; background:#ffe6e6; color:#900; padding:8px; border-radius:6px; margin-bottom:8px"></div>
             <input name="mobile" placeholder="Mobile number" required>
             <input name="password" type="password" placeholder="Password" required>
-            <button type="submit">Login</button>
+            <button type="submit" id="loginBtn">Login</button>
+            <div id="loginProgress" style="display:none; margin-top:8px; align-items:center">
+                <svg width="24" height="24" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="25" cy="25" r="20" stroke="#128c7e" stroke-width="5" fill="none" stroke-linecap="round" stroke-dasharray="31.4 31.4">
+                        <animateTransform attributeName="transform" type="rotate" repeatCount="indefinite" dur="0.8s" from="0 25 25" to="360 25 25"/>
+                    </circle>
+                </svg>
+                <span style="margin-left:8px; color:#128c7e; vertical-align:middle">Authenticating...</span>
+            </div>
         </form>
         <p class="small">New user? <a href="{% url 'register' %}">Register here</a></p>
     </div>
 </div>
 {% endblock %}
+
+    {% block scripts %}
+    <script>
+    document.addEventListener('DOMContentLoaded', function(){
+        var form = document.getElementById('loginForm');
+        var btn = document.getElementById('loginBtn');
+        var progress = document.getElementById('loginProgress');
+        var alertBox = document.getElementById('loginAlert');
+
+        form.addEventListener('submit', function(){
+            // show spinner and disable button to prevent double submits
+            btn.disabled = true;
+            progress.style.display = 'flex';
+            alertBox.style.display = 'none';
+        });
+
+        // If the server sent an error message render it inline
+        {% if error %}
+            var serverError = "{{ error|escapejs }}";
+        {% else %}
+            var serverError = null;
+        {% endif %}
+        if (serverError) {
+            alertBox.textContent = serverError;
+            alertBox.style.display = 'block';
+        }
+    });
+    </script>
+    {% endblock %}

@@ -11,12 +11,14 @@ from .models import (
     ProfessionalDetail,
     Caste,
     Koottam,
+    Dhosam,
     Rasi,
     Star,
     Education,
     Profession,
 )
 from datetime import datetime, date
+import re
 
 from django.shortcuts import get_object_or_404
 
@@ -40,9 +42,30 @@ def register(request):
         mobile = request.POST.get('mobile', '').strip()
         gender = request.POST.get('gender', '').strip()
 
+        # Server-side validation
+        name_pattern = re.compile(r'^[A-Z][a-zA-Z]*$')
+        if not first_name or not name_pattern.match(first_name):
+            return render(request, 'main/register.html', {'error': 'First name must start with a capital letter and contain letters only.'})
+        if last_name and not name_pattern.match(last_name):
+            return render(request, 'main/register.html', {'error': 'Last name must start with a capital letter and contain letters only.'})
         if not mobile:
-            messages.error(request, 'Mobile number is required.')
-            return redirect('register')
+            return render(request, 'main/register.html', {'error': 'Mobile number is required.'})
+
+        # Normalize mobile: strip non-digits, handle optional +91/91/0 prefixes
+        digits = re.sub(r'\D', '', mobile)
+        # If starts with country code 91 or leading 0, take last 10 digits
+        if len(digits) > 10:
+            digits = digits[-10:]
+
+        if len(digits) != 10:
+            return render(request, 'main/register.html', {'error': 'Mobile number must contain 10 digits (optionally prefixed with +91 or 0).'} )
+
+        # Indian mobile numbers should start with 6-9
+        if digits[0] not in '6789':
+            return render(request, 'main/register.html', {'error': 'Invalid Indian mobile number. It should start with 6,7,8, or 9.'})
+
+        # use normalized 10-digit mobile as canonical username
+        mobile = digits
 
         if User.objects.filter(username=mobile).exists():
             messages.error(request, 'A user with this mobile already exists. Please login.')
@@ -83,8 +106,8 @@ def login_view(request):
         if user is not None:
             auth_login(request, user)
             return redirect('matches')
-        messages.error(request, 'Invalid mobile or password.')
-        return redirect('login')
+        # Render the login page with an inline error so the template can show it without a redirect
+        return render(request, 'main/login.html', {'error': 'Invalid credentials. Please check your mobile and password.'})
 
     return render(request, 'main/login.html')
 
@@ -242,6 +265,15 @@ def profile(request):
                     bd.rasi = None
             else:
                 bd.rasi = None
+            # dhosam (new) - FK
+            dhosam_id = request.POST.get('dhosam')
+            if dhosam_id:
+                try:
+                    bd.dhosam = Dhosam.objects.get(pk=int(dhosam_id))
+                except (Dhosam.DoesNotExist, ValueError):
+                    bd.dhosam = None
+            else:
+                bd.dhosam = None
             star_id = request.POST.get('star')
             if star_id:
                 try:
@@ -308,6 +340,7 @@ def profile(request):
     rasis = Rasi.objects.all()
     stars = Star.objects.all()
     koottams = Koottam.objects.all()
+    dhosams = Dhosam.objects.all()
     educations = Education.objects.all()
     professions = Profession.objects.all()
     # compute date range for date of birth: between 50 years ago and 18 years ago
@@ -326,8 +359,9 @@ def profile(request):
         'profile': profile,
         'castes': castes,
         'rasis': rasis,
-        'stars': stars,
-        'koottams': koottams,
+    'stars': stars,
+    'koottams': koottams,
+    'dhosams': dhosams,
         'educations': educations,
         'professions': professions,
         'min_dob': min_dob.isoformat(),

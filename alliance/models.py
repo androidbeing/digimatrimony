@@ -86,6 +86,18 @@ class Star(models.Model):
         return f"{self.star} ({self.rasi.rasi})"
 
 
+class Dhosam(models.Model):
+    dhosam = models.CharField(max_length=50, unique=True)
+    dhosam_ta = models.CharField(max_length=50, blank=True, help_text='Tamil name')
+
+    class Meta:
+        verbose_name = 'Dhosam'
+        verbose_name_plural = 'Dhosams'
+
+    def __str__(self):
+        return self.dhosam
+
+
 class BirthDetail(models.Model):
     profile = models.OneToOneField(MemberProfile, on_delete=models.CASCADE, related_name='birth_detail')
     date_of_birth = models.DateField(null=True, blank=True)
@@ -93,6 +105,7 @@ class BirthDetail(models.Model):
     place_of_birth = models.CharField(max_length=200, blank=True)
     rasi = models.ForeignKey(Rasi, on_delete=models.SET_NULL, null=True, blank=True)
     star = models.ForeignKey(Star, on_delete=models.SET_NULL, null=True, blank=True)
+    dhosam = models.ForeignKey(Dhosam, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return f"Birth details for {self.profile}"

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import MemberProfile, Caste, Koottam, FamilyDetail, Rasi, Star, BirthDetail, Education, Profession, ProfessionalDetail
+from .models import MemberProfile, Caste, Koottam, FamilyDetail, Rasi, Star, BirthDetail, Education, Profession, ProfessionalDetail, Dhosam
 
 @admin.register(MemberProfile)
 class MemberProfileAdmin(admin.ModelAdmin):
@@ -34,7 +34,7 @@ class StarAdmin(admin.ModelAdmin):
 
 @admin.register(BirthDetail)
 class BirthDetailAdmin(admin.ModelAdmin):
-    list_display = ('profile', 'date_of_birth', 'time_of_birth', 'place_of_birth', 'rasi', 'star')
+    list_display = ('profile', 'date_of_birth', 'time_of_birth', 'place_of_birth', 'rasi', 'star', 'dhosam')
     search_fields = ('profile__user__first_name', 'profile__user__last_name')
 
 @admin.register(Education)
@@ -49,5 +49,10 @@ class ProfessionAdmin(admin.ModelAdmin):
 class ProfessionalDetailAdmin(admin.ModelAdmin):
     list_display = ('profile', 'education', 'profession', 'monthly_income')
     search_fields = ('profile__user__first_name', 'profile__user__last_name')
+
+
+@admin.register(Dhosam)
+class DhosamAdmin(admin.ModelAdmin):
+    list_display = ('dhosam', 'dhosam_ta')
 
 # Register your models here.
