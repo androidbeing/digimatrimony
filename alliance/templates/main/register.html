@@ -1,0 +1,39 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Register - DigiMat{% endblock %}
+{% block page_title %}Register{% endblock %}
+
+{% block content %}
+<style>
+    /* ensure consistent box-sizing so padding counts inside width */
+    html { box-sizing: border-box; }
+    *, *:before, *:after { box-sizing: inherit; }
+
+    .register-body { font-family: 'Open Sans', Arial, sans-serif; margin:0; padding:1rem; background: linear-gradient(135deg,#25d366 0%,#128c7e 100%); min-height:100vh; display:flex; align-items:center; justify-content:center }
+    .card { background:#fff; padding:1.5rem; border-radius:10px; max-width:480px; width:100%; box-shadow:0 6px 18px rgba(0,0,0,0.12); margin:1rem auto; }
+    input, select { width:100%; padding:0.7rem; margin:0.4rem 0; border:1px solid #ddd; border-radius:6px }
+    button { background:#128c7e; color:#fff; padding:0.8rem 1rem; border:none; border-radius:6px; width:100%; font-weight:600 }
+    .small { font-size:0.9rem; color:#555 }
+</style>
+
+<div class="register-body">
+    <div class="card" style="max-width:480px; margin:0 auto;">
+        <h2>Register</h2>
+        <form method="post">
+            {% csrf_token %}
+            <input name="first_name" placeholder="First name" required>
+            <input name="last_name" placeholder="Last name">
+            <input name="mobile" placeholder="Mobile number" required>
+            <label class="small">Gender</label>
+            <select name="gender">
+                <option value="M">Male</option>
+                <option value="F">Female</option>
+                <option value="O">Other</option>
+            </select>
+            <p class="small">Password will be generated automatically as the reverse of your mobile number.</p>
+            <button type="submit">Register</button>
+        </form>
+        <p class="small">Already have an account? <a href="{% url 'login' %}">Login</a></p>
+    </div>
+</div>
+{% endblock %}

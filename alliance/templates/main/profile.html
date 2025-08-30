@@ -1,0 +1,386 @@
+{% extends 'main/base.html' %}
+
+{% block title %}My Profile - DigiMat{% endblock %}
+{% block page_title %}My Profile{% endblock %}
+
+{% block content %}
+<div class="card" style="width:100%">
+    {% if profile %}
+        <div class="profile-main-card" style="width:100%">
+            <!-- Basic Details section (read-only) -->
+            <section style="padding-bottom:1rem; border-bottom:1px solid #eee; margin-bottom:1rem">
+                <h4>Basic Details</h4>
+                <p style="font-size:14px;"><strong>Name</strong> <span class="value">: {{ profile.user.first_name }} {{ profile.user.last_name }}</span></p>
+                <p style="font-size:14px;"><strong>Mobile</strong> <span class="value">: {{ profile.mobile }}</span></p>
+                <p style="font-size:14px;"><strong>Gender</strong> <span class="value">: {{ profile.get_gender_display }}</span></p>
+            </section>
+
+            <!-- Birth section -->
+            <section id="family-form" style="position:relative; padding-bottom:1rem; border-bottom:1px solid #eee; margin-bottom:1rem">
+                <div style="position:absolute; right:10px; top:8px">
+                    {% if not profile.birth_detail or not profile.birth_detail.date_of_birth %}
+                        <a href="#" class="open-modal" data-modal="birthModal">+</a>
+                    {% endif %}
+                </div>
+                <h4>Birth Details</h4>
+                {% if profile.birth_detail %}
+                    <p style="font-size:14px;"><strong>Date of Birth</strong> <span class="value">: {{ profile.birth_detail.date_of_birth }}</span></p>
+                    <p style="font-size:14px;"><strong>Time of Birth</strong> <span class="value">: {{ profile.birth_detail.time_of_birth }}</span></p>
+                    <p style="font-size:14px;"><strong>Place</strong> <span class="value">: {{ profile.birth_detail.place_of_birth }}</span></p>
+                    <p style="font-size:14px;"><strong>Rasi</strong> <span class="value">: {{ profile.birth_detail.rasi }}</span></p>
+                {% else %}
+                    <p style="font-size:14px;"><em>Birth details not added yet</em></p>
+                {% endif %}
+            </section>
+
+            <!-- Family section -->
+            <section style="position:relative; padding-bottom:1rem; border-bottom:1px solid #eee; margin-bottom:1rem">
+                <div style="position:absolute; right:10px; top:8px">
+                    <a href="#" class="open-modal" data-modal="familyModal">{% if profile.family_detail %}&#9998;{% else %}+{% endif %}</a>
+                </div>
+                <h4>Family Details</h4>
+                {% if profile.family_detail %}
+                    <p style="font-size:14px;"><strong>Father</strong> <span class="value">: {{ profile.family_detail.father_name }}</span></p>
+                    <p style="font-size:14px;"><strong>Mother</strong> <span class="value">: {{ profile.family_detail.mother_name }}</span></p>
+                    <p style="font-size:14px;"><strong>Siblings</strong> <span class="value">: {{ profile.family_detail.siblings }}</span></p>
+                    <p style="font-size:14px;"><strong>Caste</strong> <span class="value">: {{ profile.family_detail.caste }}</span></p>
+                    <p style="font-size:14px;"><strong>Koottam</strong> <span class="value">: {{ profile.family_detail.koottam }}</span></p>
+                    <p style="font-size:14px;"><strong>Kula Deity</strong> <span class="value">: {{ profile.family_detail.kula_deity }}</span></p>
+                {% else %}
+                    <p style="font-size:14px;"><em>Family details not added yet</em></p>
+                {% endif %}
+            </section>
+
+            <!-- Professional section -->
+            <section style="position:relative; padding-bottom:0;">
+                <div style="position:absolute; right:10px; top:8px">
+                    <a href="#" class="open-modal" data-modal="profModal">{% if profile.professional_detail %}&#9998;{% else %}+{% endif %}</a>
+                </div>
+                <h4>Professional Details</h4>
+                {% if profile.professional_detail %}
+                    <p style="font-size:14px;"><strong>Education:</strong> <span class="value">: {{ profile.professional_detail.education }}</span></p>
+                    <p style="font-size:14px;"><strong>Profession:</strong> <span class="value">: {{ profile.professional_detail.profession }}</span></p>
+                    <p style="font-size:14px;"><strong>Income:</strong> <span class="value">: {{ profile.professional_detail.monthly_income }}</span></p>
+                {% else %}
+                    <p style="font-size:14px;"><em>Professional details not added yet</em></p>
+                {% endif %}
+            </section>
+        </div>
+
+    <!-- Basic Details editing removed: read-only on this page -->
+
+        <!-- Family Modal -->
+        <div id="familyModal" class="modal" aria-hidden="true">
+            <div class="modal-overlay"></div>
+            <div class="modal-card card">
+                <div style="display:flex; justify-content:space-between; align-items:flex-start">
+                    <h3 style="margin:0">Family Details</h3>
+                    <!--<button class="modal-close" aria-label="Close">&times;</button>-->
+                </div>
+                <form id="familyForm" method="post" action="{% url 'profile' %}" class="modal-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="section" value="family">
+                    <label>Father name</label>
+                    <input name="father_name" value="{{ profile.family_detail.father_name|default_if_none:'' }}">
+                    <label>Mother name</label>
+                    <input name="mother_name" value="{{ profile.family_detail.mother_name|default_if_none:'' }}">
+                    <label>Siblings</label>
+                    <input name="siblings" value="{{ profile.family_detail.siblings|default_if_none:'' }}">
+                    <label>Kula Deity</label>
+                    <input name="kula_deity" id="kulaDeity" value="{{ profile.family_detail.kula_deity|default_if_none:'' }}" required>
+                    <label>Caste</label>
+                    <select name="caste">
+                        <option value="">-- Select caste --</option>
+                        {% for c in castes %}
+                            <option value="{{ c.id }}" {% if profile.family_detail and profile.family_detail.caste and profile.family_detail.caste.id == c.id %}selected{% endif %}>{{ c.caste }}</option>
+                        {% endfor %}
+                    </select>
+                    <label>Koottam</label>
+                    <select name="koottam" id="koottamSelect">
+                        <option value="">-- Select koottam --</option>
+                        {% for k in koottams %}
+                            <option value="{{ k.id }}" data-caste="{{ k.caste.id }}" {% if profile.family_detail and profile.family_detail.koottam and profile.family_detail.koottam.id == k.id %}selected{% endif %}>{{ k.subcaste }} ({{ k.caste.caste }})</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit">Save Family Details</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Birth Modal (only rendered when date_of_birth is not set) -->
+        {% if not profile.birth_detail or not profile.birth_detail.date_of_birth %}
+        <div id="birthModal" class="modal" aria-hidden="true">
+            <div class="modal-overlay"></div>
+            <div class="modal-card card">
+                <div style="display:flex; justify-content:space-between; align-items:center">
+                    <h3 style="margin:0">Birth Details</h3>
+                    <!--<button class="modal-close" aria-label="Close">&times;</button>-->
+                </div>
+                <form method="post" action="{% url 'profile' %}" class="modal-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="section" value="birth">
+                    <label>Date of birth</label>
+                    <input type="date" name="date_of_birth" min="{{ min_dob }}" max="{{ max_dob }}" value="{% if profile.birth_detail and profile.birth_detail.date_of_birth %}{{ profile.birth_detail.date_of_birth|date:'Y-m-d' }}{% endif %}">
+                    <label>Time of birth</label>
+                    <!-- visible 12-hour time picker: hour, minute, AM/PM -->
+                    <div style="display:flex; gap:0.5rem; align-items:center">
+                        <select id="tob_hour" aria-label="Hour" style="width:70px">
+                            <option value="">HH</option>
+                        </select>
+                        <select id="tob_minute" aria-label="Minute" style="width:80px">
+                            <option value="">MM</option>
+                        </select>
+                        <select id="tob_ampm" aria-label="AM/PM" style="width:80px">
+                            <option value="AM">AM</option>
+                            <option value="PM">PM</option>
+                        </select>
+                    </div>
+                    <!-- hidden field to submit in 24-hour format expected by server -->
+                    <input type="hidden" name="time_of_birth" id="timeOfBirth24" value="{% if profile.birth_detail and profile.birth_detail.time_of_birth %}{{ profile.birth_detail.time_of_birth|time:'H:i:s' }}{% endif %}">
+                    <label>Place of birth</label>
+                    <input name="place_of_birth" value="{{ profile.birth_detail.place_of_birth|default_if_none:'' }}">
+                    <label>Rasi</label>
+                    <select name="rasi">
+                        <option value="">-- Select Rasi --</option>
+                        {% for r in rasis %}
+                            <option value="{{ r.id }}" {% if profile.birth_detail and profile.birth_detail.rasi and profile.birth_detail.rasi.id == r.id %}selected{% endif %}>{{ r.rasi }}</option>
+                        {% endfor %}
+                    </select>
+                    <label>Star</label>
+                    <select name="star" id="starSelect">
+                        <option value="">-- Select Star --</option>
+                        {% for s in stars %}
+                            <option value="{{ s.id }}" data-rasi="{{ s.rasi.id }}" {% if profile.birth_detail and profile.birth_detail.star and profile.birth_detail.star.id == s.id %}selected{% endif %}>{{ s.star }} ({{ s.rasi.rasi }})</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit">Save Birth Details</button>
+                </form>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Professional Modal -->
+        <div id="profModal" class="modal" aria-hidden="true">
+            <div class="modal-overlay"></div>
+            <div class="modal-card card">
+                <div style="display:flex; justify-content:space-between; align-items:center">
+                    <h3 style="margin:0">Professional Details</h3>
+                    <!--<button class="modal-close" aria-label="Close">&times;</button>-->
+                </div>
+                <form method="post" action="{% url 'profile' %}" class="modal-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="section" value="professional">
+                    <label>Education</label>
+                    <select name="education">
+                        <option value="">-- Select education --</option>
+                        {% for e in educations %}
+                            <option value="{{ e.id }}" {% if profile.professional_detail and profile.professional_detail.education and profile.professional_detail.education.id == e.id %}selected{% endif %}>{{ e.education }}</option>
+                        {% endfor %}
+                    </select>
+                    <label>Profession</label>
+                    <select name="profession">
+                        <option value="">-- Select profession --</option>
+                        {% for p in professions %}
+                            <option value="{{ p.id }}" {% if profile.professional_detail and profile.professional_detail.profession and profile.professional_detail.profession.id == p.id %}selected{% endif %}>{{ p.profession }}</option>
+                        {% endfor %}
+                    </select>
+                    <label>Monthly income</label>
+                    <input name="monthly_income" type="number" step="1" min="0" value="{{ profile.professional_detail.monthly_income|default_if_none:'' }}">
+                    <button type="submit">Save Professional Details</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- existing modals (familyModal, birthModal, profModal) are kept below -->
+        
+        <!-- Reset Password trigger -->
+        <div style="margin-top:1rem;">
+            <button class="open-modal" data-modal="resetModal" style="background:#fff; border:1px solid #ddd; padding:0.6rem 0.9rem; border-radius:6px; cursor:pointer">Reset Password</button>
+        </div>
+
+        <!-- Reset Password Modal -->
+        <div id="resetModal" class="modal" aria-hidden="true">
+            <div class="modal-overlay"></div>
+            <div class="modal-card card">
+                <div style="display:flex; justify-content:space-between; align-items:center">
+                    <h3 style="margin:0">Reset Password</h3>
+                </div>
+                <form method="post" action="{% url 'profile' %}" class="modal-form" id="resetForm">
+                    {% csrf_token %}
+                    <input type="hidden" name="section" value="reset_password">
+                    <label>Old password</label>
+                    <input name="old_password" type="password" autocomplete="current-password" required>
+                    <label>New password</label>
+                    <input name="new_password" id="newPassword" type="password" autocomplete="new-password" required>
+                    <label>Confirm new password</label>
+                    <input name="confirm_password" id="confirmPassword" type="password" autocomplete="new-password" required>
+                    <button type="submit">Change Password</button>
+                </form>
+            </div>
+        </div>
+
+        <p style="margin-top:1rem; font-size:14px;"><a href="{% url 'matches' %}">Back to Matches</a></p>
+    {% else %}
+        <p>No profile found.</p>
+    {% endif %}
+</div>
+    <style>
+        /* modal styles that mirror the form/card look used on register/login */
+        .modal { display:none; position:fixed; inset:0; z-index:3000; align-items:center; justify-content:center }
+        .modal[aria-hidden="false"] { display:flex }
+        .modal-overlay { position:absolute; inset:0; background:rgba(0,0,0,0.4); }
+        .modal-card { position:relative; z-index:10; width:100%; max-width:520px; padding:1.25rem; border-radius:10px }
+    .modal-card input { width:100%; padding:0.7rem; margin:0.4rem 0; border:1px solid #ddd; border-radius:6px }
+    .modal-card button { background:#128c7e; color:#fff; padding:0.8rem 1rem; border:none; border-radius:6px; width:100%; font-weight:600 }
+    .modal-close { background:transparent; border:none; font-size:1.4rem; color:#666; cursor:pointer }
+    /* labels: make all labels in this template smaller for dense forms */
+    label { font-size:12px; display:block; margin-bottom:0.25rem; color:#333 }
+    /* Align display labels (e.g. <p><strong>Label:</strong> value) in profile sections */
+    .profile-main-card p { margin:0.35rem 0; display:flex; align-items:flex-start; gap:0.6rem; }
+    .profile-main-card p strong { display:inline-block; width:120px; text-align:left; margin-right:0; color:#222; font-weight:600; flex-shrink:0 }
+    .profile-main-card p span.value { flex:1 }
+    @media (max-width:520px) {
+        .profile-main-card p { display:block }
+        .profile-main-card p strong { display:block; width:auto; text-align:left; margin-right:0; margin-bottom:0.25rem }
+    }
+    </style>
+
+    <style>
+    /* (pw-toggle UI removed) */
+    </style>
+
+    <script>
+        (function(){
+            function openModal(id){
+                const m = document.getElementById(id);
+                if(!m) return;
+                // if opening birth modal, initialize date and time selects from existing values
+                if(id === 'birthModal'){
+                    const hiddenTime = document.getElementById('timeOfBirth24');
+                    const dateInput = m.querySelector('input[name="date_of_birth"]');
+                    if(dateInput && dateInput.value === '' && hiddenTime && hiddenTime.value){
+                        // try to read the profile date from server-rendered DOM (if present elsewhere)
+                        // but usually date input has value already from template. no-op otherwise.
+                    }
+                }
+                m.setAttribute('aria-hidden','false');
+            }
+            function closeModal(el){
+                const m = el.closest('.modal');
+                if(!m) return;
+                m.setAttribute('aria-hidden','true');
+            }
+            document.querySelectorAll('.open-modal').forEach(function(btn){
+                btn.addEventListener('click', function(e){
+                    e.preventDefault();
+                    const id = btn.getAttribute('data-modal');
+                    openModal(id);
+                })
+            });
+            document.querySelectorAll('.modal-close').forEach(function(b){ b.addEventListener('click', function(e){ closeModal(e.target); }) });
+            document.querySelectorAll('.modal-overlay').forEach(function(o){ o.addEventListener('click', function(e){ closeModal(e.target); }) });
+            // filter stars by selected rasi
+            function filterStarsByRasi(rasiId){
+                const starSelect = document.getElementById('starSelect');
+                if(!starSelect) return;
+                Array.from(starSelect.options).forEach(function(opt){
+                    const optRasi = opt.getAttribute('data-rasi');
+                    if(!optRasi) return; // keep placeholder
+                    opt.style.display = (rasiId && optRasi !== rasiId) ? 'none' : 'block';
+                });
+                // if currently selected option is hidden, reset selection
+                if(starSelect.selectedOptions.length){
+                    const sel = starSelect.selectedOptions[0];
+                    if(sel && sel.style.display === 'none') starSelect.value = '';
+                }
+            }
+            const rasiSelect = document.querySelector('select[name="rasi"]');
+            if(rasiSelect){
+                rasiSelect.addEventListener('change', function(e){ filterStarsByRasi(e.target.value); });
+                // initialize
+                filterStarsByRasi(rasiSelect.value);
+            }
+            // convert 12-hour time to 24-hour before submitting birth form
+            const birthForm = document.querySelector('#birthModal form');
+            if(birthForm){
+                birthForm.addEventListener('submit', function(e){
+                    const h = document.getElementById('tob_hour');
+                    const m = document.getElementById('tob_minute');
+                    const ap = document.getElementById('tob_ampm');
+                    const hidden = document.getElementById('timeOfBirth24');
+                    if(h && m && ap && hidden){
+                        const hh = parseInt(h.value,10);
+                        const mm = parseInt(m.value,10);
+                        const ampm = (ap.value || 'AM');
+                        if(!isNaN(hh) && !isNaN(mm)){
+                            let hour24 = hh % 12;
+                            if(ampm === 'PM') hour24 = hour24 + 12;
+                            const hhStr = hour24.toString().padStart(2,'0');
+                            const mmStr = mm.toString().padStart(2,'0');
+                            hidden.value = hhStr + ':' + mmStr + ':00';
+                        } else {
+                            hidden.value = '';
+                        }
+                    }
+                });
+            }
+
+            // populate hour/minute selects and initialize from existing hidden value
+            (function initTimePickers(){
+                const hSel = document.getElementById('tob_hour');
+                const mSel = document.getElementById('tob_minute');
+                const hidden = document.getElementById('timeOfBirth24');
+                if(!hSel || !mSel) return;
+                for(let i=1;i<=12;i++){ const o = document.createElement('option'); o.value = i; o.text = String(i).padStart(2,'0'); hSel.appendChild(o); }
+                for(let j=0;j<60;j++){ const o = document.createElement('option'); o.value = String(j).padStart(2,'0'); o.text = String(j).padStart(2,'0'); mSel.appendChild(o); }
+                // initialize from hidden value like '19:05:00'
+                if(hidden && hidden.value){
+                    const parts = hidden.value.split(':');
+                    if(parts.length>=2){
+                        let hh = parseInt(parts[0],10);
+                        const mm = parts[1];
+                        let ampm = 'AM';
+                        if(hh>=12){ ampm = 'PM'; if(hh>12) hh = hh-12; }
+                        if(hh===0) hh = 12;
+                        hSel.value = hh;
+                        mSel.value = mm;
+                        const apSel = document.getElementById('tob_ampm'); if(apSel) apSel.value = ampm;
+                    }
+                }
+            })();
+        })();
+    </script>
+    <script>
+        // client-side validation for family form
+        (function(){
+            const fam = document.getElementById('familyForm');
+            if(!fam) return;
+            fam.addEventListener('submit', function(e){
+                const kula = document.getElementById('kulaDeity');
+                if(kula && !kula.value.trim()){
+                    e.preventDefault();
+                    alert('Kula Deity is required.');
+                    kula.focus();
+                    return false;
+                }
+            });
+        })();
+    </script>
+    <script>
+        // client-side validation for reset password form
+        (function(){
+            const resetForm = document.getElementById('resetForm');
+            if(!resetForm) return;
+            resetForm.addEventListener('submit', function(e){
+                const np = document.getElementById('newPassword');
+                const cp = document.getElementById('confirmPassword');
+                if(np && cp && np.value !== cp.value){
+                    e.preventDefault();
+                    alert('New password and confirmation do not match.');
+                    return false;
+                }
+                // allow submit; server will logout on success
+            });
+        })();
+    </script>
+{% endblock %}

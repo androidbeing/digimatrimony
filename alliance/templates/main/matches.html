@@ -1,0 +1,39 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Matches - DigiMat{% endblock %}
+{% block page_title %}Matches{% endblock %}
+
+{% block content %}
+<style>
+    .matches-body { font-family: 'Open Sans', Arial, sans-serif; margin:0; padding:1rem; background: linear-gradient(135deg,#f8f9fa 0%,#fff 100%); min-height:100vh }
+    .container { max-width:900px; margin:0 auto }
+    .card { background:#fff; padding:1rem; border-radius:8px; box-shadow:0 6px 18px rgba(0,0,0,0.06); margin:0.75rem 0 }
+    .profile-grid { display:grid; grid-template-columns: repeat(auto-fill,minmax(220px,1fr)); gap:1rem }
+    .profile { padding:0.75rem }
+    .btn { background:#128c7e; color:#fff; padding:0.5rem 0.8rem; border-radius:6px; text-decoration:none }
+    @media(max-width:600px){ .profile-grid{ grid-template-columns: repeat(1,1fr) } }
+</style>
+
+<div class="container matches-body">
+    <div class="card">
+        {% if not me_complete %}
+            <div style="padding:0.75rem; background:#fff3cd; border-radius:8px; margin-bottom:1rem; color:#856404">
+                Your profile is incomplete. Please <a href="{% url 'profile' %}">complete your Family, Birth and Professional details</a> to see matches.
+            </div>
+        {% endif %}
+        <div class="profile-grid">
+            {% if profiles %}
+                {% for p in profiles %}
+                <a href="{% url 'profile_detail' p.pk %}" class="card profile profile-link" style="text-decoration:none; color:inherit; display:block">
+                    <h3>{{ p.user.first_name }} {{ p.user.last_name }}</h3>
+                    <p>Mobile: {{ p.mobile }}</p>
+                    <p>Gender: {{ p.get_gender_display }}</p>
+                </a>
+                {% endfor %}
+            {% else %}
+                <div class="card">No matching profiles found.</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,6 @@
+Django>=5.2.5
+djangorestframework>=3.14
+django-filter>=23.2
+psycopg2-binary>=2.9  # For PostgreSQL, remove if using SQLite
+Pillow>=10.0           # For image uploads
+django-cors

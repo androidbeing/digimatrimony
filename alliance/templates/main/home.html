@@ -1,0 +1,40 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Pavalavart - Empowering Matrimony Centers{% endblock %}
+{% block page_title %}Welcome{% endblock %}
+
+{% block content %}
+<style>
+    /* Page-specific styles kept inside content to avoid duplicating head */
+    .home-card { max-width: 900px; margin: 2rem auto; padding: 2rem; background:#fff; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,0.10) }
+    .features { margin-top: 1.5rem; background: #e9f5ee; border-radius: 8px; padding: 1rem }
+    .cta { margin-top: 1.5rem; font-size:1.05rem; color:#128c7e; font-weight:600 }
+    .privacy-link { color:#128c7e; text-decoration:underline }
+    @media (max-width:700px){ .home-card { margin:1rem } }
+</style>
+
+<div class="home-card card">
+    <h1>Welcome to Pavalavart</h1>
+    <p>For matrimony info centers and members — committed support to help you find the right alliance, on time.</p>
+
+    <div class="features">
+        <strong>Key Features:</strong>
+        <ul>
+            <li>Onboard and manage groom and bride profiles</li>
+            <li>View matching profiles and propose alliances</li>
+            <li>Easy-to-use platform for centers and members</li>
+            <li>Empowering communities to connect and find suitable matches</li>
+            <li>Secure and private data management</li>
+            <li>Role-based access for Admin, Manager, and Member</li>
+            <li>Mobile-friendly and responsive design</li>
+        </ul>
+    </div>
+    <div class="cta">Join DigiMat and make the journey to finding the right alliance simple, secure, and efficient!</div>
+
+    <h3>Why DigiMat?</h3>
+    <p>We believe in supporting local communities and making the process of finding the right match easier for everyone. DigiMat bridges the gap between technology and tradition, ensuring a smooth experience for all users.</p>
+
+    <p style="margin-top:1rem; font-size:0.9rem">&copy; 2025 Pavalavart. All rights reserved. <a class="privacy-link" href="{% url 'privacy_policy' %}">Privacy Policy</a></p>
+</div>
+
+{% endblock %}

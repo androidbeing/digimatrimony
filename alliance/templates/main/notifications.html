@@ -1,0 +1,16 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Notifications - DigiMat{% endblock %}
+{% block page_title %}Notifications{% endblock %}
+
+{% block content %}
+<div class="card">
+    <ul>
+        {% for n in notifications %}
+            <li>{{ n.text }}</li>
+        {% empty %}
+            <li>No notifications</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

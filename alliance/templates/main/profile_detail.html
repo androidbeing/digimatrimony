@@ -1,0 +1,57 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Profile - DigiMat{% endblock %}
+{% block page_title %}Profile{% endblock %}
+
+{% block content %}
+<div class="card" style="width:100%">
+    {% if profile %}
+        <div class="profile-main-card" style="width:100%">
+            <section style="padding-bottom:1rem; border-bottom:1px solid #eee; margin-bottom:1rem">
+                <h4>Basic Details</h4>
+                <p style="font-size:14px;"><strong>Name</strong> <span class="value">: {{ profile.user.first_name }} {{ profile.user.last_name }}</span></p>
+                <p style="font-size:14px;"><strong>Mobile</strong> <span class="value">: {{ profile.mobile }}</span></p>
+                <p style="font-size:14px;"><strong>Gender</strong> <span class="value">: {{ profile.get_gender_display }}</span></p>
+            </section>
+
+            <section style="padding-bottom:1rem; border-bottom:1px solid #eee; margin-bottom:1rem">
+                <h4>Birth Details</h4>
+                {% if profile.birth_detail %}
+                    <p style="font-size:14px;"><strong>Date</strong> <span class="value">: {{ profile.birth_detail.date_of_birth }}</span></p>
+                    <p style="font-size:14px;"><strong>Place</strong> <span class="value">: {{ profile.birth_detail.place_of_birth }}</span></p>
+                    <p style="font-size:14px;"><strong>Rasi</strong> <span class="value">: {{ profile.birth_detail.rasi }}</span></p>
+                    <p style="font-size:14px;"><strong>Star</strong> <span class="value">: {{ profile.birth_detail.star }}</span></p>
+                {% else %}
+                    <p><em>Birth details not added yet</em></p>
+                {% endif %}
+            </section>
+            
+            <section style="padding-bottom:1rem; border-bottom:1px solid #eee; margin-bottom:1rem">
+                <h4>Family Details</h4>
+                {% if profile.family_detail %}
+                    <p style="font-size:14px;"><strong>Father</strong> <span class="value">: {{ profile.family_detail.father_name }}</span></p>
+                    <p style="font-size:14px;"><strong>Mother</strong> <span class="value">: {{ profile.family_detail.mother_name }}</span></p>
+                    <p style="font-size:14px;"><strong>Siblings</strong> <span class="value">: {{ profile.family_detail.siblings }}</span></p>
+                    <p style="font-size:14px;"><strong>Caste</strong> <span class="value">: {{ profile.family_detail.caste }}</span></p>
+                {% else %}
+                    <p><em>Family details not added yet</em></p>
+                {% endif %}
+            </section>
+        
+            <section>
+                <h4>Professional Details</h4>
+                {% if profile.professional_detail %}
+                    <p style="font-size:14px;"><strong>Education</strong> <span class="value">: {{ profile.professional_detail.education }}</span></p>
+                    <p style="font-size:14px;"><strong>Profession</strong> <span class="value">: {{ profile.professional_detail.profession }}</span></p>
+                    <p style="font-size:14px;"><strong>Income</strong> <span class="value">: {{ profile.professional_detail.monthly_income }}</span></p>
+                {% else %}
+                    <p><em>Professional details not added yet</em></p>
+                {% endif %}
+            </section>
+        </div>
+        <p style="margin-top:1rem;font-size:14px;"><a href="{% url 'matches' %}">Back to Matches</a></p>
+    {% else %}
+        <p>No profile found.</p>
+    {% endif %}
+</div>
+{% endblock %}
