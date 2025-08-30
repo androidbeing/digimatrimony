@@ -1,6 +1,11 @@
 from django.contrib import admin
 from .models import MemberProfile, Caste, Koottam, FamilyDetail, Rasi, Star, BirthDetail, Education, Profession, ProfessionalDetail, Dhosam
 
+# Customize admin site text
+admin.site.site_header = "Pavalavart Administration"
+admin.site.site_title = "Pavalavart Administration"
+admin.site.index_title = "Pavalavart Administration"
+
 @admin.register(MemberProfile)
 class MemberProfileAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'mobile', 'gender', 'created_at')

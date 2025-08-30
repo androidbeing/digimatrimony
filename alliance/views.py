@@ -107,7 +107,7 @@ def login_view(request):
             auth_login(request, user)
             return redirect('matches')
         # Render the login page with an inline error so the template can show it without a redirect
-        return render(request, 'main/login.html', {'error': 'Invalid credentials. Please check your mobile and password.'})
+        return render(request, 'main/login.html', {'error': 'Invalid credentials. Please check your mobile number and password.'})
 
     return render(request, 'main/login.html')
 
