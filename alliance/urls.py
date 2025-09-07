@@ -12,4 +12,7 @@ urlpatterns = [
     path('notifications/', views.notifications, name='notifications'),
     path('profile/', views.profile, name='profile'),
     path('profile/<int:pk>/', views.profile_detail, name='profile_detail'),
+    path('profile/photos/upload/', views.profile_photo_upload, name='profile_photo_upload'),
+    path('profile/photos/<int:pk>/set_primary/', views.profile_photo_set_primary, name='profile_photo_set_primary'),
+    path('profile/photos/<int:pk>/delete/', views.profile_photo_delete, name='profile_photo_delete'),
 ]

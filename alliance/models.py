@@ -2,7 +2,24 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
 
-# Create your models here.
+
+# Profile photo model: up to 5 per user, one primary
+class ProfilePhoto(models.Model):
+    profile = models.ForeignKey('MemberProfile', on_delete=models.CASCADE, related_name='photos')
+    image = models.ImageField(upload_to='profile_photos/%Y/%m/%d/')
+    is_primary = models.BooleanField(default=False)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['profile'], condition=models.Q(is_primary=True), name='one_primary_photo_per_profile')
+        ]
+
+    def save(self, *args, **kwargs):
+        # Ensure only one primary per profile
+        if self.is_primary:
+            ProfilePhoto.objects.filter(profile=self.profile, is_primary=True).update(is_primary=False)
+        super().save(*args, **kwargs)
 
 class MemberProfile(models.Model):
     GENDER_CHOICES = [

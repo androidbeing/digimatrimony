@@ -1,5 +1,10 @@
 from django.contrib import admin
-from .models import MemberProfile, Caste, Koottam, FamilyDetail, Rasi, Star, BirthDetail, Education, Profession, ProfessionalDetail, Dhosam
+from .models import MemberProfile, Caste, Koottam, FamilyDetail, Rasi, Star, BirthDetail, Education, Profession, ProfessionalDetail, Dhosam, ProfilePhoto
+# Register ProfilePhoto model
+@admin.register(ProfilePhoto)
+class ProfilePhotoAdmin(admin.ModelAdmin):
+    list_display = ('profile', 'is_primary', 'uploaded_at')
+    readonly_fields = ('uploaded_at',)
 
 # Customize admin site text
 admin.site.site_header = "Pavalavart Administration"

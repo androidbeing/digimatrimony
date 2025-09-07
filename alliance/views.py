@@ -1,9 +1,10 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.urls import reverse
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.decorators import login_required
+
 from .models import (
     MemberProfile,
     FamilyDetail,
@@ -16,6 +17,7 @@ from .models import (
     Star,
     Education,
     Profession,
+    ProfilePhoto
 )
 from datetime import datetime, date
 import re
@@ -374,3 +376,63 @@ def profile_detail(request, pk):
     # show read-only profile of another user (MemberProfile.pk)
     profile = get_object_or_404(MemberProfile, pk=pk)
     return render(request, 'main/profile_detail.html', {'profile': profile})
+
+
+
+# Photo upload
+@login_required
+def profile_photo_upload(request):
+    profile = request.user.profile
+    if profile.photos.count() >= 5:
+        messages.error(request, "Maximum 5 photos allowed.")
+        return redirect('profile')
+    if request.method == "POST" and request.FILES.get('photo'):
+        photo = request.FILES['photo']
+        if photo.size > 5 * 1024 * 1024:
+            messages.error(request, "Max file size is 5MB.")
+            return redirect('profile')
+        if not photo.content_type in ['image/jpeg', 'image/png']:
+            messages.error(request, "Only JPEG and PNG allowed.")
+            return redirect('profile')
+        is_primary = profile.photos.count() == 0
+        ProfilePhoto.objects.create(profile=profile, image=photo, is_primary=is_primary)
+        messages.success(request, "Photo uploaded.")
+    return redirect('profile')
+
+# Set primary photo
+@login_required
+def profile_photo_set_primary(request, pk):
+    profile = request.user.profile
+    photo = get_object_or_404(ProfilePhoto, pk=pk, profile=profile)
+    ProfilePhoto.objects.filter(profile=profile, is_primary=True).update(is_primary=False)
+    photo.is_primary = True
+    photo.save()
+    messages.success(request, "Profile photo updated.")
+    return redirect('profile')
+
+# Delete photo
+@login_required
+def profile_photo_delete(request, pk):
+    profile = request.user.profile
+    photo = get_object_or_404(ProfilePhoto, pk=pk, profile=profile)
+    photo.delete()
+    messages.success(request, "Photo deleted.")
+    return redirect('profile')
+
+@login_required
+def profile_photo_set_primary(request, pk):
+    profile = request.user.profile
+    photo = get_object_or_404(ProfilePhoto, pk=pk, profile=profile)
+    ProfilePhoto.objects.filter(profile=profile, is_primary=True).update(is_primary=False)
+    photo.is_primary = True
+    photo.save()
+    messages.success(request, "Profile photo updated.")
+    return redirect('profile')
+
+@login_required
+def profile_photo_delete(request, pk):
+    profile = request.user.profile
+    photo = get_object_or_404(ProfilePhoto, pk=pk, profile=profile)
+    photo.delete()
+    messages.success(request, "Photo deleted.")
+    return redirect('profile')

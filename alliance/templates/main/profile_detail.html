@@ -49,6 +49,80 @@
                     <p><em>Professional details not added yet</em></p>
                 {% endif %}
             </section>
+
+            <!-- Profile Photos (read-only grid) -->
+            <section style="margin-bottom:2rem;">
+                <h4>Profile Photos</h4>
+                {% with photos=profile.photos.all %}
+                {% if photos %}
+                <style>
+                .photo-stack { position:relative;width:100%;max-width:600px;height:220px;margin:auto; }
+                .card-photo { position:absolute;width:100%;height:220px;border-radius:12px;box-shadow:0 2px 8px #bbb;background:#fff;cursor:pointer;transition:box-shadow 0.2s; }
+                .card-photo.primary { border:3px solid #128c7e;box-shadow:0 4px 16px #888;z-index:10; }
+                .card-photo:not(.primary) { border:2px solid #ccc;z-index:1; }
+                </style>
+                <div class="photo-stack">
+                    {% for p in photos|dictsortreversed:"is_primary" %}
+                        {% if p.is_primary %}
+                            <div class="card-photo primary" style="top:0;left:0;" onclick="openPhotoViewer({{ forloop.counter0 }})">
+                                <img src="{{ p.image.url }}" alt="Primary photo" style="width:100%;height:100%;object-fit:cover;border-radius:12px;">
+                                <div class="badge" style="position:absolute;top:8px;left:8px;background:#128c7e;color:#fff;padding:2px 8px;border-radius:4px;font-size:12px;">Primary</div>
+                            </div>
+                        {% else %}
+                            <div class="card-photo" style="top:{{ forloop.counter0|add:'16' }}px;left:{{ forloop.counter0|add:'8' }}px;" onclick="openPhotoViewer({{ forloop.counter0 }})">
+                                <img src="{{ p.image.url }}" alt="photo" style="width:100%;height:100%;object-fit:cover;border-radius:12px;">
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <!-- Photo Viewer Modal -->
+                <div id="photoViewerModal" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.8);z-index:9999;align-items:center;justify-content:center;">
+                    <span onclick="closePhotoViewer()" style="position:absolute;top:30px;right:40px;font-size:32px;color:#fff;cursor:pointer;">&times;</span>
+                    <button id="photoPrevBtn" onclick="photoPrev()" style="position:absolute;left:40px;top:50%;transform:translateY(-50%);font-size:32px;color:#fff;background:none;border:none;cursor:pointer;">&#8592;</button>
+                    <img id="photoViewerImg" src="" alt="Photo" style="max-width:80vw;max-height:80vh;border-radius:12px;box-shadow:0 0 24px #222;display:block;margin:auto;">
+                    <button id="photoNextBtn" onclick="photoNext()" style="position:absolute;right:40px;top:50%;transform:translateY(-50%);font-size:32px;color:#fff;background:none;border:none;cursor:pointer;">&#8594;</button>
+                </div>
+                {% else %}
+                    <div style="color:#888;text-align:center;padding:2rem 0;">No photos uploaded yet.</div>
+                {% endif %}
+                {% endwith %}
+                <script>
+                var photoUrls = [
+                    {% for p in profile.photos.all %}'{{ p.image.url|escapejs }}'{% if not forloop.last %}, {% endif %}{% endfor %}
+                ];
+                var currentPhotoIdx = 0;
+                function openPhotoViewer(idx) {
+                    currentPhotoIdx = idx;
+                    document.getElementById('photoViewerImg').src = photoUrls[idx];
+                    document.getElementById('photoViewerModal').style.display = 'flex';
+                    updatePhotoNav();
+                }
+                function closePhotoViewer() {
+                    document.getElementById('photoViewerModal').style.display = 'none';
+                }
+                function photoPrev() {
+                    if(currentPhotoIdx > 0) {
+                        currentPhotoIdx--;
+                        document.getElementById('photoViewerImg').src = photoUrls[currentPhotoIdx];
+                        updatePhotoNav();
+                    }
+                }
+                function photoNext() {
+                    if(currentPhotoIdx < photoUrls.length-1) {
+                        currentPhotoIdx++;
+                        document.getElementById('photoViewerImg').src = photoUrls[currentPhotoIdx];
+                        updatePhotoNav();
+                    }
+                }
+                function updatePhotoNav() {
+                    document.getElementById('photoPrevBtn').style.display = (currentPhotoIdx === 0) ? 'none' : 'block';
+                    document.getElementById('photoNextBtn').style.display = (currentPhotoIdx === photoUrls.length-1) ? 'none' : 'block';
+                }
+                document.addEventListener('keydown', function(e){
+                    if(e.key === 'Escape') closePhotoViewer();
+                });
+                </script>
+            </section>
         </div>
         <p style="margin-top:1rem;font-size:14px;"><a href="{% url 'matches' %}">Back to Matches</a></p>
     {% else %}
