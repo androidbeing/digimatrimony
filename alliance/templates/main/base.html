@@ -68,7 +68,7 @@
         @media (max-width:700px) { .app-bar { padding:0 0.6rem } .page-title{ display:none } }
     </style>
 </head>
-<body>
+<body class="main-body{% block body_class %}{% endblock %}">
     <header class="app-bar">
         <div class="left">
             {% if request.user.is_authenticated %}
@@ -89,7 +89,7 @@
                 <a href="{% url 'logout' %}"><img src="{% static 'icons/logout.svg' %}" alt="Logout" style="width:20px;height:20px;vertical-align:middle;margin-right:8px;">Logout</a>-->
             {% else %}
                 <a href="{% url 'login' %}"><img src="{% static 'icons/login.svg' %}" alt="Login" style="width:20px;height:20px;vertical-align:middle;margin-right:8px;">Login</a>
-                <a href="{% url 'register' %}"><img src="{% static 'icons/profile_pic.svg' %}" alt="Register" style="width:20px;height:20px;vertical-align:middle;margin-right:8px;">Register</a>
+                <a href="{% url 'register' %}"><img src="{% static 'icons/register.svg' %}" alt="Register" style="width:20px;height:20px;vertical-align:middle;margin-right:8px;">Register</a>
             {% endif %}
         </nav>
     </header>
@@ -108,6 +108,12 @@
     <main class="container">
         {% block content %}{% endblock %}
     </main>
+
+    <footer style="width:100%;position:relative;bottom:0;left:0;margin-top:32px;">
+        <div style="background:rgba(255,255,255,0.4);color:#222;text-align:center;padding:12px 0;font-size:12px;border-radius:0; width:100%; margin:0;">
+            &copy; {{ now|date:'Y' }} Pavalavart. All rights reserved.
+        </div>
+    </footer>
 
     <script>
         (function(){

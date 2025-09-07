@@ -1,19 +1,58 @@
 {% extends 'main/base.html' %}
+{% load static %}
 
 {% block title %}Pavalavart - Empowering Matrimony Centers{% endblock %}
 {% block page_title %}Welcome{% endblock %}
 
+{% block body_class %} home-bg{% endblock %}
 {% block content %}
 <style>
-    /* Page-specific styles kept inside content to avoid duplicating head */
+    .main-body.home-bg {
+        background: url('{% static "banners/theme1.png" %}') no-repeat center center fixed;
+        background-size: cover;
+    }
     .home-card { max-width: 900px; margin: 2rem auto; padding: 2rem; background:#fff; border-radius:12px; box-shadow:0 2px 12px rgba(0,0,0,0.10) }
     .features { margin-top: 1.5rem; background: #e9f5ee; border-radius: 8px; padding: 1rem }
     .cta { margin-top: 1.5rem; font-size:1.05rem; color:#128c7e; font-weight:600 }
     .privacy-link { color:#128c7e; text-decoration:underline }
     @media (max-width:700px){ .home-card { margin:1rem } }
 </style>
-
-<div class="home-card card">
+<div>
+    <div class="home-card card" style="background: rgba(0,0,0,0.20); color: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.10); padding: 2rem; max-width: 900px; margin: 2rem auto;">
+        <h1 style="font-size:2rem; margin-bottom:1rem;">Welcome to Your Community Pavalavart</h1>
+        <h3 style="font-size:1.2rem; font-weight:400; margin-bottom:1.2rem;">Finding the right partner is about more than scrolling through profiles—it’s about trust, guidance, and genuine connections. At our Information Center, we blend decades of local expertise with a seamless digital experience, so you’re never alone on your journey to happily ever after.</h3>
+        <ul style="padding-left:1.2rem; margin-bottom:1.2rem;">
+            <li>Personalized matchmaking that listens to your values and aspirations</li>
+            <li>Hand-verified profiles for authenticity and peace of mind</li>
+            <li>Dedicated local support, because community insights matter</li>
+            <li>Complete privacy and secure handling of your information</li>
+            <li>Ongoing guidance at every step, from first introduction to final celebration</li>
+        </ul>
+        <h5 style="font-size:1rem; font-weight:500; margin-top:1.2rem;">Step into a supportive, modern space where tradition and technology unite. Register today and let us help you discover a match that feels just right.</h5>
+    </div>
+    <style>
+    @media (max-width:700px){
+        .home-card.card {
+            padding: 1rem;
+            margin: 1rem;
+            font-size: 0.98rem;
+        }
+        .home-card.card h1 {
+            font-size: 1.3rem;
+        }
+        .home-card.card h3 {
+            font-size: 1rem;
+        }
+        .home-card.card h5 {
+            font-size: 0.95rem;
+        }
+        .home-card.card ul {
+            font-size: 0.98rem;
+        }
+    }
+    </style>
+</div>
+<!--<div class="home-card card">
     <h1>Welcome to Pavalavart</h1>
     <p>For matrimony info centers and members — committed support to help you find the right alliance, on time.</p>
 
@@ -32,9 +71,9 @@
     <div class="cta">Join Pavalavart and make the journey to finding the right alliance simple, secure, and efficient!</div>
 
     <h3>Why Pavalavart?</h3>
-    <p>We believe in supporting local communities and making the process of finding the right match easier for everyone. Pavalavart bridges the gap between technology and tradition, ensuring a smooth experience for all users.</p>
+    <p>We believe in supporting local communities and making the process of finding the right match easier for everyone. Pavalavart bridges the gap between technology and tradition, ensuring a smooth experience for all users.</p> -->
 
-    <p style="margin-top:1rem; font-size:0.9rem">&copy; 2025 Pavalavart. All rights reserved. <a class="privacy-link" href="{% url 'privacy_policy' %}">Privacy Policy</a></p>
+    <!--<p style="margin-top:1rem; font-size:0.9rem">&copy; 2025 Pavalavart. All rights reserved. <a class="privacy-link" href="{% url 'privacy_policy' %}">Privacy Policy</a></p>-->
 </div>
 
 {% endblock %}
