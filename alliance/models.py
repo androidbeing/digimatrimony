@@ -3,6 +3,18 @@ from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 
+# Shortlist model for favorites
+class Shortlist(models.Model):
+    member = models.ForeignKey('MemberProfile', on_delete=models.CASCADE, related_name='shortlists')
+    favorite = models.ForeignKey('MemberProfile', on_delete=models.CASCADE, related_name='favorited_by')
+    added_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('member', 'favorite')
+
+    def __str__(self):
+        return f"{self.member} favorited {self.favorite}"
+
 # Notification model for Manager to send notifications to Seekers
 class Notification(models.Model):
     title = models.CharField(max_length=200)

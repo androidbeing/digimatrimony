@@ -1,4 +1,5 @@
 {% extends 'main/base.html' %}
+{% load static %}
 
 {% block title %}Profile - DigiMat{% endblock %}
 {% block page_title %}Profile{% endblock %}
@@ -8,9 +9,22 @@
     {% if profile %}
         <div class="profile-main-card" style="width:100%">
             <section style="padding-bottom:1rem; border-bottom:1px solid #eee; margin-bottom:1rem">
-                <h4>Basic Details</h4>
+                                <div style="display:flex;justify-content:space-between;align-items:center;">
+                                    <h4>Basic Details</h4>
+                                    {% if show_favorite %}
+                                        {% if is_favorited %}
+                                            <a href="{% url 'shortlist_remove' profile.pk %}" title="Remove from favorites">
+                                                <img src="{% static 'icons/favorite_green.svg' %}" alt="Favorited" style="width:32px;height:32px;">
+                                            </a>
+                                        {% else %}
+                                            <a href="{% url 'shortlist_add' profile.pk %}" title="Add to favorites">
+                                                <img src="{% static 'icons/favorite.svg' %}" alt="Favorite" style="width:32px;height:32px;">
+                                            </a>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
                 <p style="font-size:14px;"><strong>Name</strong> <span class="value">: {{ profile.user.first_name }} {{ profile.user.last_name }}</span></p>
-                <p style="font-size:14px;"><strong>Mobile</strong> <span class="value">: {{ profile.mobile }}</span></p>
+                <p style="font-size:14px;"><strong>Mobile</strong> <span class="value">: XXXXXX{{ profile.mobile|slice:"6:10" }}</span></p>
                 <p style="font-size:14px;"><strong>Gender</strong> <span class="value">: {{ profile.get_gender_display }}</span></p>
             </section>
 
@@ -40,7 +54,7 @@
             </section>
         
             <section>
-                <h4>Professional Details</h4>
+                <h4>Profession Details</h4>
                 {% if profile.professional_detail %}
                     <p style="font-size:14px;"><strong>Education</strong> <span class="value">: {{ profile.professional_detail.education }}</span></p>
                     <p style="font-size:14px;"><strong>Profession</strong> <span class="value">: {{ profile.professional_detail.profession }}</span></p>

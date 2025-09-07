@@ -18,7 +18,8 @@ from .models import (
     Education,
     Profession,
     ProfilePhoto,
-    Notification
+    Notification,
+    Shortlist
 )
 from datetime import datetime, date
 import re
@@ -172,8 +173,28 @@ def matches(request):
 
 @login_required
 def shortlisted(request):
-    # placeholder: list of profiles the user shortlisted
-    return render(request, 'main/shortlisted.html', {})
+    # List profiles favorited by the current user
+    profile = request.user.profile
+    favorites = MemberProfile.objects.filter(favorited_by__member=profile)
+    return render(request, 'main/shortlisted.html', {'profiles': favorites})
+@login_required
+def shortlist_add(request, pk):
+    # Add a profile to favorites
+    member = request.user.profile
+    favorite = get_object_or_404(MemberProfile, pk=pk)
+    if member != favorite and not Shortlist.objects.filter(member=member, favorite=favorite).exists():
+        Shortlist.objects.create(member=member, favorite=favorite)
+        messages.success(request, "Profile added to favorites.")
+    return redirect('profile_detail', pk=pk)
+
+@login_required
+def shortlist_remove(request, pk):
+    # Remove a profile from favorites
+    member = request.user.profile
+    favorite = get_object_or_404(MemberProfile, pk=pk)
+    Shortlist.objects.filter(member=member, favorite=favorite).delete()
+    messages.success(request, "Profile removed from favorites.")
+    return redirect('profile_detail', pk=pk)
 
 
 @login_required
@@ -372,7 +393,13 @@ def profile(request):
 def profile_detail(request, pk):
     # show read-only profile of another user (MemberProfile.pk)
     profile = get_object_or_404(MemberProfile, pk=pk)
-    return render(request, 'main/profile_detail.html', {'profile': profile})
+    show_favorite = False
+    is_favorited = False
+    if request.user.is_authenticated and hasattr(request.user, 'profile'):
+        me = request.user.profile
+        is_favorited = Shortlist.objects.filter(member=me, favorite=profile).exists()
+        show_favorite = (me != profile)
+    return render(request, 'main/profile_detail.html', {'profile': profile, 'show_favorite': show_favorite, 'is_favorited': is_favorited})
 
 
 

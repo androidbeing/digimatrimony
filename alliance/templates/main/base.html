@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}DigiMat{% endblock %}</title>
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600&display=swap" rel="stylesheet">
+    {% load static %}
     <style>
         
         html { box-sizing: border-box; }
@@ -80,24 +81,27 @@
         </div>
         <nav class="nav-links">
             {% if request.user.is_authenticated %}
-                <span style="display:inline-block; padding:6px 10px">Welcome, {{ request.user.first_name }}</span>
-                <!--<a href="{% url 'matches' %}">Matches</a>-->
-                <!--<a href="{% url 'logout' %}">Logout</a>-->
+                <span style="display:inline-block; padding:6px 10px">Hi, {{ request.user.first_name }}</span>
+                <!--<a href="{% url 'matches' %}"><img src="{% static 'icons/matches.svg' %}" alt="Matches" style="width:20px;height:20px;vertical-align:middle;margin-right:8px;">Matches</a>
+                <a href="{% url 'shortlisted' %}"><img src="{% static 'icons/myfavorites.svg' %}" alt="Shortlisted" style="width:20px;height:20px;vertical-align:middle;margin-right:8px;">Shortlisted</a>
+                <a href="{% url 'notifications' %}"><img src="{% static 'icons/notifications.svg' %}" alt="Notifications" style="width:20px;height:20px;vertical-align:middle;margin-right:8px;">Notifications</a>
+                <a href="{% url 'profile' %}"><img src="{% static 'icons/myprofile.svg' %}" alt="My Profile" style="width:20px;height:20px;vertical-align:middle;margin-right:8px;">My Profile</a>
+                <a href="{% url 'logout' %}"><img src="{% static 'icons/logout.svg' %}" alt="Logout" style="width:20px;height:20px;vertical-align:middle;margin-right:8px;">Logout</a>-->
             {% else %}
-                <a href="{% url 'login' %}">Login</a>
-                <a href="{% url 'register' %}">Register</a>
+                <a href="{% url 'login' %}"><img src="{% static 'icons/login.svg' %}" alt="Login" style="width:20px;height:20px;vertical-align:middle;margin-right:8px;">Login</a>
+                <a href="{% url 'register' %}"><img src="{% static 'icons/profile_pic.svg' %}" alt="Register" style="width:20px;height:20px;vertical-align:middle;margin-right:8px;">Register</a>
             {% endif %}
         </nav>
     </header>
 
     <!-- Drawer and overlay -->
     <div id="appDrawer" class="drawer" role="navigation" aria-hidden="true">
-        <a href="{% url 'home' %}">Home</a>
-        <a href="{% url 'matches' %}">Matches</a>
-        <a href="{% url 'shortlisted' %}">Shortlisted</a>
-        <a href="{% url 'notifications' %}">Notifications</a>
-        <a href="{% url 'profile' %}">My Profile</a>
-        <a href="{% url 'logout' %}">Logout</a>
+        <a href="{% url 'home' %}"><img src="{% static 'icons/home.svg' %}" alt="Home" style="width:20px;height:20px;vertical-align:middle;margin-right:8px;">Home</a>
+        <a href="{% url 'matches' %}"><img src="{% static 'icons/matches.svg' %}" alt="Matches" style="width:20px;height:20px;vertical-align:middle;margin-right:8px;">Matches</a>
+        <a href="{% url 'shortlisted' %}"><img src="{% static 'icons/myfavorites.svg' %}" alt="Shortlisted" style="width:20px;height:20px;vertical-align:middle;margin-right:8px;">Shortlisted</a>
+        <a href="{% url 'notifications' %}"><img src="{% static 'icons/notifications.svg' %}" alt="Notifications" style="width:20px;height:20px;vertical-align:middle;margin-right:8px;">Notifications</a>
+        <a href="{% url 'profile' %}"><img src="{% static 'icons/myprofile.svg' %}" alt="My Profile" style="width:20px;height:20px;vertical-align:middle;margin-right:8px;">My Profile</a>
+        <a href="{% url 'logout' %}"><img src="{% static 'icons/logout.svg' %}" alt="Logout" style="width:20px;height:20px;vertical-align:middle;margin-right:8px;">Logout</a>
     </div>
     <div id="drawerOverlay" class="overlay" tabindex="-1"></div>
 

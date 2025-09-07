@@ -56,7 +56,7 @@
                 <div style="position:absolute; right:10px; top:8px">
                     <a href="#" class="open-modal" data-modal="profModal">{% if profile.professional_detail %}&#9998;{% else %}+{% endif %}</a>
                 </div>
-                <h4>Professional Details</h4>
+                <h4>Profession Details</h4>
                 {% if profile.professional_detail %}
                     <p style="font-size:14px;"><strong>Education:</strong> <span class="value">: {{ profile.professional_detail.education }}</span></p>
                     <p style="font-size:14px;"><strong>Profession:</strong> <span class="value">: {{ profile.professional_detail.profession }}</span></p>
@@ -272,7 +272,7 @@
             <div class="modal-overlay"></div>
             <div class="modal-card card">
                 <div style="display:flex; justify-content:space-between; align-items:center">
-                    <h3 style="margin:0">Professional Details</h3>
+                    <h3 style="margin:0">Profession Details</h3>
                     <!--<button class="modal-close" aria-label="Close">&times;</button>-->
                 </div>
                 <form method="post" action="{% url 'profile' %}" class="modal-form">
@@ -294,7 +294,7 @@
                     </select>
                     <label>Monthly income</label>
                     <input name="monthly_income" type="number" step="1" min="0" value="{{ profile.professional_detail.monthly_income|default_if_none:'' }}">
-                    <button type="submit">Save Professional Details</button>
+                    <button type="submit">Save Profession Details</button>
                 </form>
             </div>
         </div>

@@ -1,10 +1,49 @@
 {% extends 'main/base.html' %}
+{% load i18n %}
+{% load static %}
+{% load photo_extras %}
 
 {% block title %}Shortlisted - DigiMat{% endblock %}
 {% block page_title %}Shortlisted{% endblock %}
 
 {% block content %}
-<div class="card">
-    <p>Sample shortlisted list. Update with actual logic later.</p>
+<div class="container py-3">
+    <!--<h4 class="mb-4">{% trans "Shortlisted Profiles" %}</h4>-->
+    <div class="row">
+        {% if profiles %}
+            {% for p in profiles %}
+                <div class="col-md-4 mb-4" style="margin-bottom:32px;">
+                    <div class="card shadow-sm">
+                        <div class="card-body text-center">
+                            <a href="{% url 'profile_detail' p.pk %}" style="text-decoration:none;color:inherit;">
+                                {% if p.photos.count %}
+                                    {% with primary_photo=p.photos|get_primary %}
+                                        {% if primary_photo %}
+                                            <img src="{{ primary_photo.image.url }}" alt="Profile Photo" class="rounded mb-2" style="width:80px;height:80px;object-fit:cover;">
+                                        {% else %}
+                                            <img src="{{ p.photos.first.image.url }}" alt="Profile Photo" class="rounded mb-2" style="width:80px;height:80px;object-fit:cover;">
+                                        {% endif %}
+                                    {% endwith %}
+                                {% else %}
+                                    {% if p.gender == 'M' %}
+                                        <img src="{% static 'icons/male_icon.svg' %}" alt="Male" class="rounded mb-2" style="width:80px;height:80px;object-fit:cover;background:#f0f0f0;">
+                                    {% else %}
+                                        <img src="{% static 'icons/female_icon.svg' %}" alt="Female" class="rounded mb-2" style="width:80px;height:80px;object-fit:cover;background:#f0f0f0;">
+                                    {% endif %}
+                                {% endif %}
+                                <div style="font-weight:600;font-size:16px;">{{ p.user.first_name }} {{ p.user.last_name }}</div>
+                                <div style="font-size:14px;color:#888;">Mobile: XXXXXX{{ p.mobile|slice:"6:10" }}</div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12" style="height:60vh; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
+                <img src="{% static 'icons/noitems.svg' %}" alt="No items" style="width:80px;height:80px;opacity:0.7;">
+                <div style="color:#fff;font-size:18px;margin-top:16px;text-align:center;">{% trans "No shortlisted profiles found." %}</div>
+            </div>
+        {% endif %}
+    </div>
 </div>
 {% endblock %}

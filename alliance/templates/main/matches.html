@@ -1,4 +1,6 @@
 {% extends 'main/base.html' %}
+{% load static %}
+{% load photo_extras %}
 
 {% block title %}Matches - DigiMat{% endblock %}
 {% block page_title %}Matches{% endblock %}
@@ -24,14 +26,34 @@
         <div class="profile-grid">
             {% if profiles %}
                 {% for p in profiles %}
-                <a href="{% url 'profile_detail' p.pk %}" class="card profile profile-link" style="text-decoration:none; color:inherit; display:block">
-                    <h3>{{ p.user.first_name }} {{ p.user.last_name }}</h3>
-                    <p>Mobile: {{ p.mobile }}</p>
-                    <p>Gender: {{ p.get_gender_display }}</p>
+                <a href="{% url 'profile_detail' p.pk %}" class="card profile profile-link" style="text-decoration:none; color:inherit; display:flex; align-items:center;">
+                    {% if p.photos.count %}
+                        {% with primary_photo=p.photos|get_primary %}
+                            {% if primary_photo %}
+                                <img src="{{ primary_photo.image.url }}" alt="Profile Photo" class="rounded" style="width:60px;height:60px;object-fit:cover;margin-right:16px;">
+                            {% else %}
+                                <img src="{{ p.photos.first.image.url }}" alt="Profile Photo" class="rounded" style="width:60px;height:60px;object-fit:cover;margin-right:16px;">
+                            {% endif %}
+                        {% endwith %}
+                    {% else %}
+                        {% if p.gender == 'M' %}
+                            <img src="{% static 'icons/male_icon.svg' %}" alt="Male" class="rounded" style="width:60px;height:60px;object-fit:cover;margin-right:16px;background:#f0f0f0;">
+                        {% else %}
+                            <img src="{% static 'icons/female_icon.svg' %}" alt="Female" class="rounded" style="width:60px;height:60px;object-fit:cover;margin-right:16px;background:#f0f0f0;">
+                        {% endif %}
+                    {% endif %}
+                    <div style="flex:1;">
+                        <h3 style="margin-bottom:8px;font-size:18px;">{{ p.user.first_name }} {{ p.user.last_name }}</h3>
+                        <p style="margin-bottom:4px;font-size:15px;">XXXXXX{{ p.mobile|slice:"6:10" }}</p>
+                        <p style="margin-bottom:0;font-size:15px;">{{ p.get_gender_display }}</p>
+                    </div>
                 </a>
                 {% endfor %}
             {% else %}
-                <div class="card">No matching profiles found.</div>
+                <div class="card" style="height:60vh; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; background:#128c7e;">
+                    <img src="{% static 'icons/noitems.svg' %}" alt="No items" style="width:80px;height:80px;opacity:0.7;">
+                    <div style="color:#fff;font-size:18px;margin-top:16px;text-align:center;">No matching profiles found.</div>
+                </div>
             {% endif %}
         </div>
     </div>

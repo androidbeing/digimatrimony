@@ -1,7 +1,9 @@
 {% extends 'main/base.html' %}
 
-{% block title %}Notifications - DigiMat{% endblock %}
-{% block page_title %}Notifications{% endblock %}
+{% load i18n %}
+{% load static %}
+{% block title %}{% trans "Notifications" %} - DigiMat{% endblock %}
+{% block page_title %}{% trans "Notifications" %}{% endblock %}
 
 {% block content %}
 <div class="container py-3">
@@ -18,7 +20,10 @@
                     </div>
                 </div>
             {% empty %}
-                <div class="text-muted text-center py-4">No notifications</div>
+                <div style="height:60vh; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center;">
+                    <img src="{% static 'icons/noitems.svg' %}" alt="No items" style="width:80px;height:80px;opacity:0.7;">
+                    <div style="color:#fff;font-size:18px;margin-top:16px;text-align:center;">{% trans "No notifications" %}</div>
+                </div>
             {% endfor %}
         </div>
     </div>
