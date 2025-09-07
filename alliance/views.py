@@ -17,7 +17,8 @@ from .models import (
     Star,
     Education,
     Profession,
-    ProfilePhoto
+    ProfilePhoto,
+    Notification
 )
 from datetime import datetime, date
 import re
@@ -177,12 +178,8 @@ def shortlisted(request):
 
 @login_required
 def notifications(request):
-    # placeholder: simple notifications list
-    notes = [
-        {'text': 'New match found: Priya'},
-        {'text': 'Manager approved your profile.'},
-    ]
-    return render(request, 'main/notifications.html', {'notifications': notes})
+    notifications = Notification.objects.all().order_by('-created_at')
+    return render(request, 'main/notifications.html', {'notifications': notifications})
 
 
 @login_required

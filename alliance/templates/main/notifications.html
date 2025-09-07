@@ -4,13 +4,23 @@
 {% block page_title %}Notifications{% endblock %}
 
 {% block content %}
-<div class="card">
-    <ul>
-        {% for n in notifications %}
-            <li>{{ n.text }}</li>
-        {% empty %}
-            <li>No notifications</li>
-        {% endfor %}
-    </ul>
+<div class="container py-3">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            {% for n in notifications %}
+                <div class="card shadow-sm" style="margin-bottom: 24px;">
+                    <div class="card-body">
+                        <div class="fw-bold" style="font-size:18px;font-weight:900;margin-bottom:8px;">{{ n.title }}</div>
+                        <div style="font-size:14px;margin-bottom:8px;">{{ n.message }}</div>
+                        {% if n.message_ta %}
+                            <div style="font-size:14px;margin-bottom:4px;">{{ n.message_ta }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% empty %}
+                <div class="text-muted text-center py-4">No notifications</div>
+            {% endfor %}
+        </div>
+    </div>
 </div>
 {% endblock %}

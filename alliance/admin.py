@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import MemberProfile, Caste, Koottam, FamilyDetail, Rasi, Star, BirthDetail, Education, Profession, ProfessionalDetail, Dhosam, ProfilePhoto
+from .models import MemberProfile, Caste, Koottam, FamilyDetail, Rasi, Star, BirthDetail, Education, Profession, ProfessionalDetail, Dhosam, ProfilePhoto, Notification
 # Register ProfilePhoto model
 @admin.register(ProfilePhoto)
 class ProfilePhotoAdmin(admin.ModelAdmin):
@@ -64,5 +64,10 @@ class ProfessionalDetailAdmin(admin.ModelAdmin):
 @admin.register(Dhosam)
 class DhosamAdmin(admin.ModelAdmin):
     list_display = ('dhosam', 'dhosam_ta')
+
+
+@admin.register(Notification)
+class NotificationAdmin(admin.ModelAdmin):
+    list_display = ('title', 'message', 'message_ta', 'created_at')
 
 # Register your models here.

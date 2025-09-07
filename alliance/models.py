@@ -3,6 +3,16 @@ from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 
+# Notification model for Manager to send notifications to Seekers
+class Notification(models.Model):
+    title = models.CharField(max_length=200)
+    message = models.TextField()
+    message_ta = models.TextField(blank=True, help_text='Message in Tamil')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title
+
 # Profile photo model: up to 5 per user, one primary
 class ProfilePhoto(models.Model):
     profile = models.ForeignKey('MemberProfile', on_delete=models.CASCADE, related_name='photos')
